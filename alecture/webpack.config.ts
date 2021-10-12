@@ -1,7 +1,7 @@
 
 import path from 'path';
-// import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import webpack from 'webpack';
+// import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 // import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 // import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
@@ -14,7 +14,7 @@ const config: webpack.Configuration = {
     resolve: {
         extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
         alias: {
-            '@hooks': path.resolve(__dirname, 'hooks'),
+            '@hooks': path.resolve(__dirname, 'hooks'), //..//../../
             '@components': path.resolve(__dirname, 'components'),
             '@layouts': path.resolve(__dirname, 'layouts'),
             '@pages': path.resolve(__dirname, 'pages'),
@@ -60,12 +60,12 @@ const config: webpack.Configuration = {
         ],
     },
     plugins: [
-        new ForkTsCheckerWebpackPlugin({
-            async: false,
-            // eslint: {
-            //   files: "./src/**/*",
-            // },
-        }),
+        // new ForkTsCheckerWebpackPlugin({
+        //     async: false,
+        //     // eslint: {
+        //     //   files: "./src/**/*",
+        //     // },
+        // }),
         new webpack.EnvironmentPlugin({ NODE_ENV: isDevelopment ? 'development' : 'production' }),
     ],
     output: {
