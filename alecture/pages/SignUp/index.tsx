@@ -1,20 +1,33 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, VFC } from 'react';
+import useInput from '@hooks/useInput';
+import axios from 'axios';
 import { Form, Label, Input, LinkContainer, Button, Header, Error } from './styles';
 
 const SignUp = () => {
-    const [email, setEmail] = useState('');
-    const [nickname, setNickname] = useState('');
+    const [email, onChangeEmail, setEmail] = useInput('');
+    const [nickname, onChangeNickname, setNickname] = useInput('');
     const [password, setPassword] = useState('');
     const [passwordCheck, setPasswordCheck] = useState('');
     const [mismatchError, setMismatchError] = useState(false);
 
-    const onChangeEmail = useCallback((e) => { setEmail(e.target.value) }, []);
-    const onChangeNickname = useCallback((e) => { setNickname(e.target.value) }, []);
     const onChangePassword = useCallback((e) => { setPassword(e.target.value); setMismatchError(e.target.value !== passwordCheck) }, [passwordCheck]);
     const onChangePasswordCheck = useCallback((e) => { setPasswordCheck(e.target.value); setMismatchError(e.target.value !== password) }, [password]);
     const onSubmit = useCallback((e) => {
-        e.preventDefault(); if (!mismatchError) {
+        e.preventDefault(); if (!mismatchError && nickname) {
             console.log('serverに会員登録しましょう')
+            axios.post('/api/users', {
+                email,
+                nickname,
+                password,
+            })
+                .then((response) => { console.log(response) })
+                .catch((error) => { console.log(error) })
+                .finally(() => { });
+
+        } try { } catch (err) {
+
+        } finally {
+
         }
     }, [email, nickname, password, passwordCheck, mismatchError]);
 
