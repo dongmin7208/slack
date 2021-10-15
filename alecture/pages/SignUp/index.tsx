@@ -1,29 +1,34 @@
 import React, { useState, useCallback, VFC } from 'react';
 import useInput from '@hooks/useInput';
 import axios from 'axios';
-import { Form, Label, Input, LinkContainer, Button, Header, Error } from './styles';
-
+import { Success, Form, Label, Input, LinkContainer, Button, Header, Error } from './styles';
+import { Link } from 'react-router-dom';
 const SignUp = () => {
-    const [email, onChangeEmail, setEmail] = useInput('');
-    const [nickname, onChangeNickname, setNickname] = useInput('');
+    const [email, onChangeEmail] = useInput('');
+    const [nickname, onChangeNickname] = useInput('');
     const [password, setPassword] = useState('');
     const [passwordCheck, setPasswordCheck] = useState('');
     const [mismatchError, setMismatchError] = useState(false);
-    const [signUpError, setSignUpError] = useState(false);
+    const [signUpError, setSignUpError] = useState('');
+    const [signUpSuccess, setSignUpSuccess] = useState(false);
+
 
 
     const onChangePassword = useCallback((e) => { setPassword(e.target.value); setMismatchError(e.target.value !== passwordCheck) }, [passwordCheck]);
     const onChangePasswordCheck = useCallback((e) => { setPasswordCheck(e.target.value); setMismatchError(e.target.value !== password) }, [password]);
     const onSubmit = useCallback((e) => {
         e.preventDefault(); if (!mismatchError && nickname) {
-            console.log('serverに会員登録しましょう')
-            axios.post('/api/users', {
-                email,
-                nickname,
-                password,
-            })
-                .then((response) => { console.log(response) })
-                .catch((error) => { console.log(error); setSignUpError(true) })
+            console.log('serverに会員登録しましょう');
+            setSignUpError('');
+            setSignUpSuccess(false);
+            axios
+                .post('/api/users', {
+                    email,
+                    nickname,
+                    password,
+                })
+                .then((response) => { console.log(response); setSignUpSuccess(true); })
+                .catch((error) => { console.log(error); setSignUpError(error.response.data) })
                 .finally(() => { });
 
         } try { } catch (err) {
@@ -69,13 +74,13 @@ const SignUp = () => {
                     {mismatchError && <Error>パスワードが違います。</Error>}
                     {!nickname && <Error>NICKNAMEを入力してください。</Error>}
                     {signUpError && <Error>もう使ってあるIDです。</Error>}
-                    {/* {signUpSuccess && <Success>会員登録おめでとうございます。ログインしてください。</Success>} */}
+                    {signUpSuccess && <Success>会員登録おめでとうございます。ログインしてください。</Success>}
                 </Label>
                 <Button type="submit">会員登録</Button>
             </Form>
             <LinkContainer>
                 もう会員ですか？&nbsp;
-                <a href="/login">ログインしよう</a>
+                <Link to="/login">ログインしよう</Link>
             </LinkContainer>
         </div>
     );
