@@ -16,27 +16,33 @@ const SignUp = () => {
 
     const onChangePassword = useCallback((e) => { setPassword(e.target.value); setMismatchError(e.target.value !== passwordCheck) }, [passwordCheck]);
     const onChangePasswordCheck = useCallback((e) => { setPasswordCheck(e.target.value); setMismatchError(e.target.value !== password) }, [password]);
-    const onSubmit = useCallback((e) => {
-        e.preventDefault(); if (!mismatchError && nickname) {
-            console.log('serverに会員登録しましょう');
-            setSignUpError('');
-            setSignUpSuccess(false);
-            axios
-                .post('/api/users', {
-                    email,
-                    nickname,
-                    password,
-                })
-                .then((response) => { console.log(response); setSignUpSuccess(true); })
-                .catch((error) => { console.log(error); setSignUpError(error.response.data) })
-                .finally(() => { });
+    const onSubmit = useCallback(
+        (e) => {
+            e.preventDefault();
+            if (!mismatchError && nickname) {
+                console.log('serverに会員登録しましょう');
+                setSignUpError('');
+                setSignUpSuccess(false);
+                axios
+                    .post('/api/users', {
+                        email,
+                        nickname,
+                        password,
+                    })
+                    .then((response) => {
+                        console.log(response);
+                        setSignUpSuccess(true);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        setSignUpError(error.response.data);
+                    })
+                    .finally(() => { });
 
-        } try { } catch (err) {
 
-        } finally {
 
-        }
-    }, [email, nickname, password, passwordCheck, mismatchError]);
+            }
+        }, [email, nickname, password, passwordCheck, mismatchError]);
 
     return (
         <div id="container">
@@ -80,7 +86,7 @@ const SignUp = () => {
             </Form>
             <LinkContainer>
                 もう会員ですか？&nbsp;
-                <Link to="/login">ログインしよう</Link>
+                <Link to="/login">ログインしに行こう</Link>
             </LinkContainer>
         </div>
     );
