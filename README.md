@@ -6,3 +6,4 @@ version
 + eslint-plugin-prettier@4.0.0
 + prettier@2.4.1
 + Socket@2
+
