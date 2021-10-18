@@ -3,7 +3,7 @@ import useSWR from 'swr';
 import fetcher from '@utils/fetcher';
 import axios from 'axios';
 import { Redirect, Route, Switch } from 'react-router';
-import { Header, RightMenu, ProfileImg } from '@layouts/Workspace/styles';
+import { Header, RightMenu, ProfileImg, ProfileModal, LogOutButton } from '@layouts/Workspace/styles';
 import gravatar from 'gravatar';
 import { WorkspaceWrapper, Workspaces, Channels, Chats, WorkspaceName, MenuScroll } from './styles';
 import loadable from '@loadable/component';
@@ -44,11 +44,20 @@ const Workspace: FC = ({ children }) => {
                 <RightMenu>
                     <span onClick={onClickUserProfile}>
                         <ProfileImg src={gravatar.url(data.email, { s: '27px', d: 'retro' })} alt={data.nickname} />
-                        {showUserMenu && <Menu>profile menu</Menu>}
+                        {showUserMenu && (<Menu style={{ right: 0, top: 38 }} show={showUserMenu} onCloseModal={onClickUserProfile}>
+                            <ProfileModal>
+                                <img src={gravatar.url(data.nickname, { s: '36px', d: 'retro' })} alt={data.nickname} />
+                                <div>
+                                    <span id="profile-name">{data.nickname}</span>
+                                    <span id="profile-active">Active</span>
+                                </div>
+
+                            </ProfileModal>
+                            <LogOutButton onClick={onLogout}>logout!!</LogOutButton>
+                        </Menu>)}
                     </span>
                 </RightMenu>
             </Header>
-            <button onClick={onLogout}> logout</button>
             <WorkspaceWrapper>
                 <Workspaces>test</Workspaces>
                 <Channels>
