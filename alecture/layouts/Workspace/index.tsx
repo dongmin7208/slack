@@ -5,7 +5,7 @@ import axios from 'axios';
 import { Redirect } from 'react-router';
 import { Header, RightMenu, ProfileImg } from '@layouts/Workspace/styles';
 import gravatar from 'gravatar';
-
+import { WorkspaceWrapper, Workspaces, Channels, Chats, WorkspaceName, MenuScroll } from './styles';
 const Workspace: FC = ({ children }) => {
     const { data, error, revalidate, mutate } = useSWR('http://localhost:3095/api/users', fetcher, {
         dedupingInterval: 2000, //2秒
@@ -36,7 +36,16 @@ const Workspace: FC = ({ children }) => {
                 </RightMenu>
             </Header>
             <button onClick={onLogout}> logout</button>
-            {children}
+            <WorkspaceWrapper>
+                <Workspaces>test</Workspaces>
+                <Channels>
+                    <WorkspaceName>Slack</WorkspaceName>
+                    <MenuScroll>
+                        Menuscroll
+                    </MenuScroll>
+                </Channels>
+                <Chats>Chats</Chats>
+            </WorkspaceWrapper>
         </div>
     )
 }
