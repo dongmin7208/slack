@@ -2,14 +2,12 @@ import useInput from '@hooks/useInput';
 import { Success, Form, Error, Label, Input, LinkContainer, Button, Header } from '@pages/SignUp/styles';
 import axios from 'axios';
 import React, { useCallback, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import useSWR from 'swr';
 import fetcher from '@utils/fetcher';
 
 const LogIn = () => {
-    const { data, error, revalidate } = useSWR('http://localhost:3095/api/users', fetcher, {
-        dedupingInterval: 100000,
-    });
+    const { data, error, revalidate } = useSWR('http://localhost:3095/api/users', fetcher,);
     const [logInError, setLogInError] = useState(false);
     const [email, onChangeEmail] = useInput('');
     const [password, onChangePassword] = useInput('');
@@ -34,6 +32,9 @@ const LogIn = () => {
         [email, password]
     );
 
+    if (data) {
+        return <Redirect to="/workspace/channel" />;
+    }
     return (
         <div id="container">
             <Header>Slack</Header>
