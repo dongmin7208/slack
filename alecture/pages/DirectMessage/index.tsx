@@ -1,11 +1,8 @@
-import Workspace from '@layouts/Workspace';
 import React from 'react';
 
 const DirectMessage = () => {
     return (
-        <Workspace>
-            <div>login おめでとうございます。</div>
-        </Workspace>
+        <div>login(DM-pages) おめでとうございます。</div>
     )
 };
 
