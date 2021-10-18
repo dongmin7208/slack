@@ -50,7 +50,9 @@ const SignUp = () => {
             }
         }, [email, nickname, password, passwordCheck, mismatchError]);
 
-
+    if (data === undefined) {
+        return <div>Loding　中　です。</div>
+    }
     //밑에 return은 항상 hooks밑에 있어야함.
     if (data) {
         return <Redirect to="/workspace/channel" />;
