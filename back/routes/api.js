@@ -85,7 +85,7 @@ router.get(
         where: { url: req.params.workspace },
       });
       if (!workspace) {
-        return res.status(404).send("존재하지 않는 워크스페이스입니다.");
+        return res.status(404).send("存在しないワークスペースです。.");
       }
       return res.json(
         await workspace.getChannels({
@@ -128,7 +128,7 @@ router.post(
       });
       if (!workspace) {
         await t.rollback();
-        return res.status(404).send("존재하지 않는 워크스페이스입니다.");
+        return res.status(404).send("存在しないワークスペースです。.");
       }
       if (workspace.Channels.find((v) => v.name === req.body.name)) {
         await t.rollback();

@@ -20,7 +20,7 @@ app.set("PORT", process.env.PORT || 3095);
 sequelize
   .sync()
   .then(() => {
-    console.log("DB 연결 성공");
+    console.log("DB接続成功");
   })
   .catch(console.error);
 passportConfig();
