@@ -3,9 +3,14 @@ import useSWR from 'swr';
 import fetcher from '@utils/fetcher';
 import axios from 'axios';
 import { Redirect } from 'react-router';
+import { Header, RightMenu, ProfileImg } from '@layouts/Workspace/styles';
 
 const Workspace: FC = ({ children }) => {
-    const { data, error, revalidate, mutate } = useSWR('http://localhost:3095/api/users', fetcher,);
+    const { data, error, revalidate, mutate } = useSWR('http://localhost:3095/api/users', fetcher, {
+        dedupingInterval: 2000, //2秒
+    });
+
+    // const { data } = useSWR('hello', (key) => { localStorage.setItem('data', key); return localStorage.getItem('data') })
 
     const onLogout = useCallback(() => {
         axios.post('http://localhost:3095/api/users/logout', null, {
@@ -13,7 +18,7 @@ const Workspace: FC = ({ children }) => {
         })
             .then(() => {
                 // revalidate();
-                mutate(false);
+                mutate(false, false); //(1.data, 2.shouldRevalidate)
             });
     }, []);
     if (!data) {
@@ -22,6 +27,13 @@ const Workspace: FC = ({ children }) => {
 
     return (
         <div>
+            <Header>
+                <RightMenu>
+                    <span>
+                        <ProfileImg src="" alt={data.nickname} />
+                    </span>
+                </RightMenu>
+            </Header>
             <button onClick={onLogout}> logout</button>
             {children}
         </div>
