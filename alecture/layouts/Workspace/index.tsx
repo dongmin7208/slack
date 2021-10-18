@@ -4,6 +4,7 @@ import fetcher from '@utils/fetcher';
 import axios from 'axios';
 import { Redirect } from 'react-router';
 import { Header, RightMenu, ProfileImg } from '@layouts/Workspace/styles';
+import gravatar from 'gravatar';
 
 const Workspace: FC = ({ children }) => {
     const { data, error, revalidate, mutate } = useSWR('http://localhost:3095/api/users', fetcher, {
@@ -30,7 +31,7 @@ const Workspace: FC = ({ children }) => {
             <Header>
                 <RightMenu>
                     <span>
-                        <ProfileImg src="" alt={data.nickname} />
+                        <ProfileImg src={gravatar.url(data.email, { s: '27px', d: 'retro' })} alt={data.nickname} />
                     </span>
                 </RightMenu>
             </Header>
