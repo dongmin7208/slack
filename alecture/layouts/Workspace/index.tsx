@@ -1,8 +1,8 @@
-import React, { FC, useCallback, useState } from 'react';
+import React, { VFC, useCallback, useState } from 'react';
 import useSWR from 'swr';
 import fetcher from '@utils/fetcher';
 import axios from 'axios';
-import { Redirect, Route, Switch } from 'react-router';
+import { Redirect, Route, Switch, useParams } from 'react-router';
 import { Header, RightMenu, ProfileImg, ProfileModal, LogOutButton, AddButton } from '@layouts/Workspace/styles';
 import gravatar from 'gravatar';
 import { WorkspaceWrapper, Workspaces, Channels, Chats, WorkspaceName, MenuScroll, WorkspaceButton } from './styles';
@@ -15,16 +15,25 @@ import { Input } from '@pages/SignUp/styles';
 import useInput from '@hooks/useInput';
 import { Button } from '@pages/SignUp/styles';
 import Modal from '@components/Modal';
+import { toast } from 'react-toastify';
+import CreateChannelModal from '@components/CreateChannelModal';
+import { WorkspaceModal } from '@layouts/Workspace/styles';
+import { IChannel } from '@typings/db';
 
 const Channel = loadable(() => import('@pages/Channel'));
 const DirectMessage = loadable(() => import('@pages/DirectMessage'));
 
-const Workspace: FC = ({ children }) => {
+const Workspace: VFC = () => {
     const [showUserMenu, setShowUserMenu] = useState(false);
     const [showCreateWorkspaceModal, setShowCreateWorkspaceModal] = useState(false);
+    const [showWorkspaceModal, setShowWorkspaceModal] = useState(false);
+    const [showCreateChannelModal, setShowCreateChannelModal] = useState(false);
     const [newWorkspace, onChangeNewWorkspace, setNewWorkspace] = useInput('');
     const [newUrl, onChangeNewUrl, setNewUrl] = useInput('');
 
+
+
+    const { workspace } = useParams<{ workspace: string }>();
     const { data: userData, error, revalidate, mutate } = useSWR<IUser | false>(
         'http://localhost:3095/api/users',
         fetcher,
@@ -32,6 +41,7 @@ const Workspace: FC = ({ children }) => {
             dedupingInterval: 2000, //2秒
         });
 
+    const { data: channelData } = useSWR<IChannel[]>(userData ? `http://localhost:3095/api/workspaces/${workspace}/channels` : null, fetcher);
     // const { data } = useSWR('hello', (key) => { localStorage.setItem('data', key); return localStorage.getItem('data') })
 
     const onLogout = useCallback(() => {
@@ -57,10 +67,40 @@ const Workspace: FC = ({ children }) => {
         setShowCreateWorkspaceModal(true);
     }, [])
 
-    const onCreateWorkspace = useCallback(() => { }, [])
+    const onCreateWorkspace = useCallback((e) => {
+        e.preventDefault();
+        if (!newWorkspace || !newWorkspace.trim()) return;
+        if (!newUrl || !newUrl.trim()) return;
+        axios.post('/api/workspaces', {
+            workspace: newWorkspace,
+            url: newUrl,
+        }, {
+            withCredentials: true,
+        })
+            .then(() => {
+                revalidate();
+                setShowCreateWorkspaceModal(false);
+                setNewWorkspace('');
+                setNewUrl('');
+            })
+            .catch((error) => {
+                console.dir(error);
+                toast.error(error.response?.data, { position: 'top-center' });
+            });
+    }, [newWorkspace, newUrl])
 
     const onCloseModal = useCallback(() => {
         setShowCreateWorkspaceModal(false);
+        setShowCreateChannelModal(false);
+    }, []);
+
+
+    const toggleWorkspaceModal = useCallback(() => {
+        setShowWorkspaceModal((prev) => !prev);
+    }, []);
+
+    const onClickAddChannel = useCallback(() => {
+        setShowCreateChannelModal(true);
     }, []);
 
     if (!userData) {
@@ -101,19 +141,27 @@ const Workspace: FC = ({ children }) => {
                     <AddButton onClick={onClickCreateWorkspace}>+</AddButton>
                 </Workspaces>
                 <Channels>
-                    <WorkspaceName>Slack</WorkspaceName>
+                    <WorkspaceName onClick={toggleWorkspaceModal}>Slack</WorkspaceName>
                     <MenuScroll>
-                        Menuscroll
+                        <Menu show={showWorkspaceModal} onCloseModal={toggleWorkspaceModal} style={{ top: 95, left: 80 }}>
+                            <WorkspaceModal>
+                                <h2>Slack</h2>
+                                {/* {<button onClick={onClickInviteWorkspace}>workspaceに利用者招待</button>} */}
+                                <button onClick={onClickAddChannel}>channel作る</button>
+                                <button onClick={onLogout}>Logout!</button>
+                            </WorkspaceModal>
+                        </Menu>
+                        {channelData?.map((v) => (
+                            <div>{v.name}</div>
+                        ))}
                     </MenuScroll>
                 </Channels>
                 <Chats>
                     <Switch>
-                        <Route path="/workspace/channel" component={Channel} />
-                        <Route path="/workspace/dm" component={DirectMessage} />
-
+                        <Route path="/workspace/:workspace/channel/:channel" component={Channel} />
+                        <Route path="/workspace/:workspace/dm/:id" component={DirectMessage} />
                     </Switch>
                 </Chats>
-                {/* {children} */}
             </WorkspaceWrapper>
             <Modal show={showCreateWorkspaceModal} onCloseModal={onCloseModal}>
                 <form onSubmit={onCreateWorkspace}>
@@ -123,11 +171,16 @@ const Workspace: FC = ({ children }) => {
                     </Label>
                     <Label id="workspace-url-label">
                         <span>Workspace url</span>
-                        <Input id="worjkspace" value={newUrl} onChange={onChangeNewUrl} />
+                        <Input id="workspace" value={newUrl} onChange={onChangeNewUrl} />
                     </Label>
                     <Button type="submit">create</Button>
                 </form>
             </Modal>
+            <CreateChannelModal
+                show={showCreateChannelModal}
+                onCloseModal={onCloseModal}
+                setShowCreateChannelModal={setShowCreateChannelModal}
+            />
         </div>
     )
 }
