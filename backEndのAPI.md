@@ -1,4 +1,4 @@
-# REST API
+# back_end開発者がくれた(偽者) REST API
 HTTP 요청 리스트(ajax)
 ### GET /workspaces
 - 내 워크스페이스 목록을 가져옴
