@@ -39,17 +39,20 @@ const Workspace: VFC = () => {
 
     const { workspace } = useParams<{ workspace: string }>();
     const { data: userData, error, revalidate, mutate } = useSWR<IUser | false>(
-        'http://localhost:3095/api/users',
+        '/api/users',
         fetcher,
         {
             dedupingInterval: 2000, //2秒
         });
 
-    const { data: channelData } = useSWR<IChannel[]>(userData ? `http://localhost:3095/api/workspaces/${workspace}/channels` : null, fetcher);
+    const { data: channelData } = useSWR<IChannel[]>(userData ? `/api/workspaces/${workspace}/channels` : null, fetcher);
     // const { data } = useSWR('hello', (key) => { localStorage.setItem('data', key); return localStorage.getItem('data') })
 
+    const { data: memberData } = useSWR<IUser[]>(
+        userData ? `/api/workspaces/${workspace}/channels` : null, fetcher);
+
     const onLogout = useCallback(() => {
-        axios.post('http://localhost:3095/api/users/logout', null, {
+        axios.post('/api/users/logout', null, {
             withCredentials: true,
         })
             .then(() => {
