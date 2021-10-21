@@ -1,14 +1,14 @@
 use skill
 ![skill](./memo/skill.png)
-version
-+ eslint@7.32.0
-+ eslint-config-prettier@8.3.0
-+ eslint-plugin-prettier@4.0.0
-+ prettier@2.4.1
-+ Socket@2
-```
- .then((response) => {
-                    mutate(response.data, false); //Optimistic UI    <<false=(shouldRevalidate)
-                })
-//取り敢えず、ハートとかlikeバートンを押す。　後でデータする。
-```
+偽物のbackendAPI活用、
+
+![channel](./images/channel_create.gif)
+![sign](./images/SignUp.png)
+![sign1](./images/SignUp1.png)
+![signapi](./images/SignUpAPI.png)
+![mysql](./images/MYSQL_member.png)
+![workspace](./images/Workspace.png)
+![workspace1](./images/Workspace2.png)
+![credentials](./images/withCredentials.png)
+![cors](./images/SignUp_CORS1.png)
+![cors1](./images/SignUp_CORS.png)
